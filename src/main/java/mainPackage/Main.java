@@ -3,6 +3,7 @@ package mainPackage;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -20,6 +21,7 @@ public class Main extends Application {
     private static BorderPane mainLayout;
 
     private SettingsService settingsService;
+    private static MessageBar messageBar;
 
     public static void main(String[] args) {
         launch(args);
@@ -47,33 +49,25 @@ public class Main extends Application {
     }
 
     public static void setMessage(String message, MessageType messageType) {
-        messageBox.setText(message);
-        switch (messageType) {
-            case DEFAULT:
-                messageBox.setStyle("-fx-text-fill: black");
-                break;
-            case SUCCESS:
-                messageBox.setStyle("-fx-text-fill: green");
-                break;
-            case ERROR:
-                messageBox.setStyle("-fx-text-fill: red");
-                break;
-        }
+        messageBar.setMessage(message, messageType);
     }
 
     private void setupUiComponents() {
         mainLayout = new BorderPane();
         setupMessageBox();
+        setupTopMenuBar();
     }
 
     private void setupMessageBox() {
-        final HBox messageBoxLayout = new HBox();
-        messageBox = new Label("");
-        messageBoxLayout.getChildren().add(messageBox);
-        mainLayout.setBottom(messageBoxLayout);
+        messageBar = new MessageBar();
+        mainLayout.setBottom(messageBar.getLayout());
     }
 
-    private void closeProgram() {
+    private void setupTopMenuBar(){
+        mainLayout.setTop(new TopMenuBar(this).getLayout());
+    }
+
+    public void closeProgram() {
         settingsService.saveCurrentSettings();
         window.close();
     }
