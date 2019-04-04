@@ -1,4 +1,4 @@
-package mainPackage;
+package layouts;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
