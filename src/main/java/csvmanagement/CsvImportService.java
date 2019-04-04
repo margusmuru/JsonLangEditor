@@ -1,6 +1,7 @@
 package csvmanagement;
 
 import com.opencsv.CSVReader;
+import csvmanagement.models.CsvLine;
 import fileaccess.DataReader;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -21,15 +22,15 @@ public class CsvImportService {
         dataReader = new DataReader();
     }
 
-    public List<List<String>> getParsedCsvFile() {
+    public List<CsvLine> getParsedCsvFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open CSV File");
         File file = fileChooser.showOpenDialog(window);
-        List<List<String>> records = new ArrayList<>();
+        List<CsvLine> records = new ArrayList<>();
         try (CSVReader csvReader = new CSVReader(dataReader.openFile(file))) {
             String[] values;
             while ((values = csvReader.readNext()) != null) {
-                records.add(Arrays.asList(values));
+                records.add(new CsvLine(values));
             }
         } catch (Exception e) {
             Main.setMessage(file.getAbsolutePath() + " " + e.getMessage(), MessageType.ERROR);

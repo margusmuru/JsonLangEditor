@@ -1,20 +1,23 @@
 package csvmanagement;
 
+import csvmanagement.models.CsvLine;
 import javafx.stage.Stage;
 
 import java.util.List;
 
 public class CsvManageService {
     private Stage window;
-    private List<List<String>> records;
-    private CsvImportService csvImportService;
+    private List<CsvLine> records;
 
     public CsvManageService(Stage window) {
-        csvImportService = new CsvImportService(window);
     }
 
-    public void setParsedCsvData(List<List<String>> records) {
+    public void setParsedCsvData(List<CsvLine> records) {
         this.records = records;
+    }
+
+    public List<CsvLine> getParsedCsvData(){
+        return records;
     }
 
     public void removeNumberOfLines(int numberOfLines) {

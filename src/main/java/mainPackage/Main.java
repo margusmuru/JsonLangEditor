@@ -2,16 +2,20 @@ package mainPackage;
 
 import csvmanagement.CsvImportService;
 import csvmanagement.CsvManageService;
+import csvmanagement.models.CsvLine;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import layouts.CsvView;
 import layouts.MessageBar;
 import layouts.TopMenuBar;
 import lombok.Getter;
 import mainPackage.models.MessageType;
 import settings.SettingsService;
+
+import java.util.List;
 
 public class Main extends Application {
 
@@ -26,6 +30,7 @@ public class Main extends Application {
     private static MessageBar messageBar;
     private CsvImportService csvImportService;
     private CsvManageService csvManageService;
+    private CsvView csvView;
 
     public static void main(String[] args) {
         launch(args);
@@ -63,6 +68,7 @@ public class Main extends Application {
         mainLayout = new BorderPane();
         setupMessageBox();
         setupTopMenuBar();
+        setupCsvView();
     }
 
     private void setupMessageBox() {
@@ -70,12 +76,20 @@ public class Main extends Application {
         mainLayout.setBottom(messageBar.getLayout());
     }
 
-    private void setupTopMenuBar(){
+    private void setupTopMenuBar() {
         mainLayout.setTop(new TopMenuBar(this).getLayout());
     }
 
-    public void importCsv(){
-        csvManageService.setParsedCsvData(csvImportService.getParsedCsvFile());
+    private void setupCsvView() {
+        csvView = new CsvView();
+        mainLayout.setLeft(csvView.getLayout());
+    }
+
+    public void importCsv() {
+        List<CsvLine> csvData = csvImportService.getParsedCsvFile();
+        csvManageService.setParsedCsvData(csvData);
+        csvView.addData(csvManageService.getParsedCsvData());
+        mainLayout.setLeft(csvView.getLayout());
     }
 
     public void closeProgram() {
