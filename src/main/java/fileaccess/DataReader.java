@@ -1,10 +1,10 @@
-package settings;
+package fileaccess;
 
 import mainPackage.Main;
 import mainPackage.models.MessageType;
 
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class DataReader {
 
@@ -18,5 +18,11 @@ public class DataReader {
             Main.setMessage(fileName + " " + e.getMessage(), MessageType.ERROR);
         }
         return obj;
+    }
+
+    public Reader openFile(File file) throws Exception{
+        return new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(file.getAbsolutePath()), StandardCharsets.UTF_8));
     }
 }

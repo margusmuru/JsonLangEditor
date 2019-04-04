@@ -1,5 +1,7 @@
 package mainPackage;
 
+import csvmanagement.CsvImportService;
+import csvmanagement.CsvManageService;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -22,6 +24,8 @@ public class Main extends Application {
 
     private SettingsService settingsService;
     private static MessageBar messageBar;
+    private CsvImportService csvImportService;
+    private CsvManageService csvManageService;
 
     public static void main(String[] args) {
         launch(args);
@@ -36,6 +40,9 @@ public class Main extends Application {
             closeProgram();
         });
         setupUiComponents();
+
+        csvImportService = new CsvImportService(window);
+        csvManageService = new CsvManageService(window);
 
         settingsService = new SettingsService();
         settingsService.loadAndApplySettings();
@@ -65,6 +72,10 @@ public class Main extends Application {
 
     private void setupTopMenuBar(){
         mainLayout.setTop(new TopMenuBar(this).getLayout());
+    }
+
+    public void importCsv(){
+        csvManageService.setParsedCsvData(csvImportService.getParsedCsvFile());
     }
 
     public void closeProgram() {

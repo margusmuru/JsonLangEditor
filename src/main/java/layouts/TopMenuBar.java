@@ -22,11 +22,10 @@ public class TopMenuBar {
     private void createButtons() {
         boxLayout = new HBox();
         Button btnImport = new Button("Import CSV");
+        btnImport.setOnAction(event -> {
+            mainClass.importCsv();
+        });
         boxLayout.getChildren().add(btnImport);
-    }
-
-    public void importCsv(ActionEvent event) {
-
     }
 
 }

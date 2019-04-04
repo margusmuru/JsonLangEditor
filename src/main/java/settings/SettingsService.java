@@ -1,5 +1,7 @@
 package settings;
 
+import fileaccess.DataReader;
+import fileaccess.DataWriter;
 import lombok.Getter;
 import mainPackage.Main;
 import settings.models.Settings;

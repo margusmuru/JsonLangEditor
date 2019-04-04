@@ -1,4 +1,4 @@
-package settings;
+package fileaccess;
 
 import mainPackage.Main;
 import mainPackage.models.MessageType;
