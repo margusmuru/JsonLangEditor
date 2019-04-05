@@ -1,11 +1,12 @@
 package layouts;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import csvmanagement.JsonManageService;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import mainPackage.Main;
+import mainPackage.models.MessageType;
 
 public class JsonView {
     private VBox vbox;
@@ -34,8 +35,14 @@ public class JsonView {
     }
 
     private void parseDataAndAddData() {
-        JsonNode parsedJsonData = jsonManageService.parseJsonData(pasteArea);
-
+        boolean isJsonValid = jsonManageService.readJsonFromTextArea(pasteArea.getText());
+        if (isJsonValid) {
+            pasteArea.setStyle("-fx-background-color: #fffaf5");
+            Main.setMessage(null, MessageType.SUCCESS);
+        } else {
+            pasteArea.setStyle("-fx-text-fill: #ff0005");
+            Main.setMessage("Invalid json", MessageType.ERROR);
+        }
     }
 
 
