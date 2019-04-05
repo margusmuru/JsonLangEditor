@@ -32,6 +32,10 @@ public class CsvManageService {
         return ImmutableList.copyOf(records);
     }
 
+    public boolean hasParsedCsvData(){
+        return  records != null && !records.isEmpty();
+    }
+
     public void removeRecords(List<Integer> indexList) {
         if (indexList == null || indexList.isEmpty()) {
             return;

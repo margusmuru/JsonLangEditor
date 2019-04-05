@@ -10,6 +10,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import mainPackage.Main;
+import mainPackage.models.MessageType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,7 +92,7 @@ public class CsvView {
         return btnImport;
     }
 
-    private void importCsv(){
+    private void importCsv() {
         csvImportService = new CsvImportService(window);
         List<CsvLine> csvData = csvImportService.getParsedCsvFile();
         csvManageService.setParsedCsvData(csvData);
@@ -102,7 +104,7 @@ public class CsvView {
         Button btnRemove = new Button("Remove selected line");
         btnRemove.setStyle("-fx-background-color: #ff5953; " +
                 "-fx-border-color: #828282; " +
-                "-fx-border-width: px; " +
+                "-fx-border-width: 2px; " +
                 "-fx-border-radius: 2 2 2 2;");
         btnRemove.setTooltip(new Tooltip("Removes selected line fron the CSV file"));
         btnRemove.setOnAction(event -> removeSelectedLines());
@@ -118,13 +120,17 @@ public class CsvView {
     }
 
     private void removeSelectedLines() {
-        List<Integer> indexList = new ArrayList<>();
-        tableView.getSelectionModel().getSelectedCells().forEach(
-                element -> indexList.add(((TablePosition) element).getRow())
-        );
-        Collections.sort(indexList);
-        csvManageService.removeRecords(indexList);
-        addData(csvManageService.getParsedCsvData());
+        try{
+            List<Integer> indexList = new ArrayList<>();
+            tableView.getSelectionModel().getSelectedCells().forEach(
+                    element -> indexList.add(((TablePosition) element).getRow())
+            );
+            Collections.sort(indexList);
+            csvManageService.removeRecords(indexList);
+            addData(csvManageService.getParsedCsvData());
+        } catch (Exception e){
+            Main.setMessage("Unable to remove lines.", MessageType.ERROR);
+        }
     }
 
 }
