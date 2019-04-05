@@ -86,14 +86,16 @@ public class CsvView {
                 "-fx-border-radius: 2 2 2 2;");
         btnImport.setTooltip(
                 new Tooltip("Import a CSV file containing maximum of 4 columns [keys, lang1, lang2, lang3]"));
-        btnImport.setOnAction(event -> {
-            csvImportService = new CsvImportService(window);
-            List<CsvLine> csvData = csvImportService.getParsedCsvFile();
-            csvManageService.setParsedCsvData(csvData);
-            addData(csvData);
-            tabLayout.setContent(vbox);
-        });
+        btnImport.setOnAction(event -> importCsv());
         return btnImport;
+    }
+
+    private void importCsv(){
+        csvImportService = new CsvImportService(window);
+        List<CsvLine> csvData = csvImportService.getParsedCsvFile();
+        csvManageService.setParsedCsvData(csvData);
+        addData(csvData);
+        tabLayout.setContent(vbox);
     }
 
     private Button createRemoveSelectedLineButton() {
@@ -103,9 +105,7 @@ public class CsvView {
                 "-fx-border-width: px; " +
                 "-fx-border-radius: 2 2 2 2;");
         btnRemove.setTooltip(new Tooltip("Removes selected line fron the CSV file"));
-        btnRemove.setOnAction(event -> {
-            removeSelectedLines();
-        });
+        btnRemove.setOnAction(event -> removeSelectedLines());
         return btnRemove;
     }
 

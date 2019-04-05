@@ -20,11 +20,26 @@ public class TabView {
     private void createTabLayout() {
         TabPane tabpane = new TabPane();
         tabpane.setTabClosingPolicy(UNAVAILABLE);
-        Tab importCsv = new Tab("Import CSV");
-        // csv view adds itself
-        CsvView csvView = new CsvView(window, importCsv);
-        tabpane.getTabs().add(importCsv);
+
+        tabpane.getTabs().addAll(
+                createCsvTab(),
+                createJsonTab());
+        tabpane.getSelectionModel().select(1);
+        tabpane.setTabMinWidth(200);
         mainLayout.setCenter(tabpane);
+    }
+
+    private Tab createCsvTab(){
+        Tab csvTab = new Tab("Import CSV");
+        // csv view adds itself
+        CsvView csvView = new CsvView(window, csvTab);
+        return csvTab;
+    }
+
+    private Tab createJsonTab(){
+        Tab jsonTab = new Tab("JSON");
+        JsonView jsonView = new JsonView(window, jsonTab);
+        return jsonTab;
     }
 
 
