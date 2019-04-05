@@ -8,13 +8,13 @@ import javafx.stage.Stage;
 import mainPackage.Main;
 import mainPackage.models.MessageType;
 
-public class JsonView {
+public class MergeView {
     private VBox vbox;
     private Stage window;
     private JsonManageService jsonManageService;
     TextArea pasteArea;
 
-    public JsonView(Stage window, Tab tabLayout) {
+    public MergeView(Stage window, Tab tabLayout) {
         this.window = window;
         jsonManageService = JsonManageService.getInstance();
         vbox = new VBox();

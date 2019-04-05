@@ -37,8 +37,8 @@ public class TabView {
     }
 
     private Tab createJsonTab(){
-        Tab jsonTab = new Tab("JSON");
-        JsonView jsonView = new JsonView(window, jsonTab);
+        Tab jsonTab = new Tab("Merge");
+        MergeView mergeView = new MergeView(window, jsonTab);
         return jsonTab;
     }
 
