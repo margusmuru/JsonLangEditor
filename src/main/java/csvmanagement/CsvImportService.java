@@ -34,6 +34,7 @@ public class CsvImportService {
         } catch (Exception e) {
             Main.setMessage(file.getAbsolutePath() + " " + e.getMessage(), MessageType.ERROR);
         }
+        Main.setMessage("Imported " + records.size() + " lines of data", MessageType.SUCCESS);
         return records;
     }
 

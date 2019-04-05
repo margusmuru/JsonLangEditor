@@ -2,12 +2,12 @@ package csvmanagement;
 
 import com.google.common.collect.ImmutableList;
 import csvmanagement.models.CsvLine;
-import javafx.stage.Stage;
+import mainPackage.Main;
+import mainPackage.models.MessageType;
 
 import java.util.List;
 
 public class CsvManageService {
-    private Stage window;
     private List<CsvLine> records;
 
     private static CsvManageService SINGLE_INSTANCE = null;
@@ -32,12 +32,6 @@ public class CsvManageService {
         return ImmutableList.copyOf(records);
     }
 
-    public void removeRecord(int index) {
-        if (records.size() > index) {
-            records.remove(index);
-        }
-    }
-
     public void removeRecords(List<Integer> indexList) {
         if (indexList == null || indexList.isEmpty()) {
             return;
@@ -50,6 +44,7 @@ public class CsvManageService {
                 shiftPositions++;
             }
         }
+        Main.setMessage("Removed " + shiftPositions + " lines of data", MessageType.SUCCESS);
     }
 
 }

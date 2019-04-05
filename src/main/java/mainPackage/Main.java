@@ -64,10 +64,11 @@ public class Main extends Application {
     }
 
     private void setupCsvView() {
+        // adds itself due to button logic
         csvView = new CsvView(window, mainLayout);
     }
 
-    public void closeProgram() {
+    private void closeProgram() {
         settingsService.saveCurrentSettings();
         window.close();
     }
