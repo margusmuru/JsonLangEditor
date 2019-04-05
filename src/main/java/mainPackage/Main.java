@@ -1,21 +1,14 @@
 package mainPackage;
 
-import csvmanagement.CsvImportService;
-import csvmanagement.CsvManageService;
-import csvmanagement.models.CsvLine;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import layouts.CsvView;
 import layouts.MessageBar;
-import layouts.TopMenuBar;
 import lombok.Getter;
 import mainPackage.models.MessageType;
 import settings.SettingsService;
-
-import java.util.List;
 
 public class Main extends Application {
 
@@ -23,13 +16,10 @@ public class Main extends Application {
     private static Stage window;
     @Getter
     private static Scene scene;
-    private static Label messageBox;
     private static BorderPane mainLayout;
 
     private SettingsService settingsService;
     private static MessageBar messageBar;
-    private CsvImportService csvImportService;
-    private CsvManageService csvManageService;
     private CsvView csvView;
 
     public static void main(String[] args) {
@@ -46,8 +36,6 @@ public class Main extends Application {
         });
         setupUiComponents();
 
-        csvImportService = new CsvImportService(window);
-        csvManageService = new CsvManageService(window);
 
         settingsService = new SettingsService();
         settingsService.loadAndApplySettings();
@@ -67,7 +55,6 @@ public class Main extends Application {
     private void setupUiComponents() {
         mainLayout = new BorderPane();
         setupMessageBox();
-        setupTopMenuBar();
         setupCsvView();
     }
 
@@ -76,20 +63,8 @@ public class Main extends Application {
         mainLayout.setBottom(messageBar.getLayout());
     }
 
-    private void setupTopMenuBar() {
-        mainLayout.setTop(new TopMenuBar(this).getLayout());
-    }
-
     private void setupCsvView() {
-        csvView = new CsvView();
-        mainLayout.setLeft(csvView.getLayout());
-    }
-
-    public void importCsv() {
-        List<CsvLine> csvData = csvImportService.getParsedCsvFile();
-        csvManageService.setParsedCsvData(csvData);
-        csvView.addData(csvManageService.getParsedCsvData());
-        mainLayout.setLeft(csvView.getLayout());
+        csvView = new CsvView(window, mainLayout);
     }
 
     public void closeProgram() {
