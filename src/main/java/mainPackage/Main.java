@@ -6,6 +6,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import layouts.CsvView;
 import layouts.MessageBar;
+import layouts.TabView;
 import lombok.Getter;
 import mainPackage.models.MessageType;
 import settings.SettingsService;
@@ -21,6 +22,7 @@ public class Main extends Application {
     private SettingsService settingsService;
     private static MessageBar messageBar;
     private CsvView csvView;
+    private TabView tabView;
 
     public static void main(String[] args) {
         launch(args);
@@ -55,7 +57,7 @@ public class Main extends Application {
     private void setupUiComponents() {
         mainLayout = new BorderPane();
         setupMessageBox();
-        setupCsvView();
+        setupTabs();
     }
 
     private void setupMessageBox() {
@@ -63,9 +65,8 @@ public class Main extends Application {
         mainLayout.setBottom(messageBar.getLayout());
     }
 
-    private void setupCsvView() {
-        // adds itself due to button logic
-        csvView = new CsvView(window, mainLayout);
+    private void setupTabs() {
+        tabView = new TabView(window, mainLayout);
     }
 
     private void closeProgram() {

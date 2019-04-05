@@ -3,10 +3,10 @@ package layouts;
 import csvmanagement.CsvImportService;
 import csvmanagement.CsvManageService;
 import csvmanagement.models.CsvLine;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class CsvView {
-    private BorderPane mainLayout;
+    private Tab tabLayout;
     private VBox vbox;
     HBox buttonBarLayout;
     private Stage window;
@@ -24,9 +24,9 @@ public class CsvView {
     private CsvManageService csvManageService;
     private TableView tableView;
 
-    public CsvView(Stage window, BorderPane mainLayout) {
+    public CsvView(Stage window, Tab tabLayout) {
         this.window = window;
-        this.mainLayout = mainLayout;
+        this.tabLayout = tabLayout;
         csvImportService = new CsvImportService(window);
         csvManageService = CsvManageService.getInstance();
 
@@ -65,19 +65,25 @@ public class CsvView {
         );
         assignDeleteKeyFunctionality();
         vbox = new VBox(buttonBarLayout, tableView);
-        mainLayout.setCenter(vbox);
+        tabLayout.setContent(vbox);
     }
 
     private void createContainerWithButtons() {
         buttonBarLayout = new HBox();
         buttonBarLayout.getChildren().add(createImportButton());
         buttonBarLayout.getChildren().add(createRemoveSelectedLineButton());
+        buttonBarLayout.setPadding(new Insets(4, 4, 4, 4));
+        buttonBarLayout.setSpacing(10);
         vbox = new VBox(buttonBarLayout);
-        mainLayout.setCenter(vbox);
+        tabLayout.setContent(vbox);
     }
 
     private Button createImportButton() {
         Button btnImport = new Button("Import CSV");
+        btnImport.setStyle("-fx-background-color: #91ff80; " +
+                "-fx-border-color: #828282; " +
+                "-fx-border-width: 2px;" +
+                "-fx-border-radius: 2 2 2 2;");
         btnImport.setTooltip(
                 new Tooltip("Import a CSV file containing maximum of 4 columns [keys, lang1, lang2, lang3]"));
         btnImport.setOnAction(event -> {
@@ -85,13 +91,17 @@ public class CsvView {
             List<CsvLine> csvData = csvImportService.getParsedCsvFile();
             csvManageService.setParsedCsvData(csvData);
             addData(csvData);
-            mainLayout.setCenter(vbox);
+            tabLayout.setContent(vbox);
         });
         return btnImport;
     }
 
     private Button createRemoveSelectedLineButton() {
         Button btnRemove = new Button("Remove selected line");
+        btnRemove.setStyle("-fx-background-color: #ff5953; " +
+                "-fx-border-color: #828282; " +
+                "-fx-border-width: px; " +
+                "-fx-border-radius: 2 2 2 2;");
         btnRemove.setTooltip(new Tooltip("Removes selected line fron the CSV file"));
         btnRemove.setOnAction(event -> {
             removeSelectedLines();
