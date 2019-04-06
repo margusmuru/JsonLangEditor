@@ -31,7 +31,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         window = primaryStage;
         window.setTitle("JsonLangEditor 0.1");
-        // window.getIcons().add(new Image("Images/Logo.png"));
+        // window.getIcons().addElement(new Image("Images/Logo.png"));
         window.setOnCloseRequest(e -> {
             e.consume();
             closeProgram();

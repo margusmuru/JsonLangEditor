@@ -10,7 +10,6 @@ import mainPackage.Main;
 import mainPackage.models.MessageType;
 
 import java.io.IOException;
-import java.util.List;
 
 public class JsonMergeService {
 
@@ -34,12 +33,18 @@ public class JsonMergeService {
         return SINGLE_INSTANCE;
     }
 
-    public void add(List<SelectedCsv> selectedCsv) {
-        selectedCsv.forEach(el -> ((ObjectNode) jsonNode).put(el.getKeyField(), el.getValueField()));
+    public void addElement(SelectedCsv el) {
+        ((ObjectNode) jsonNode).put(el.getKeyField(), el.getValueField());
     }
 
-    public boolean hasElement(SelectedCsv element) {
-        return jsonNode.has(element.getKeyField());
+    public void removeElement(SelectedCsv selectedCsv) {
+        if (jsonNode.has(selectedCsv.getKeyField())) {
+            ((ObjectNode) jsonNode).remove(selectedCsv.getKeyField());
+        }
+    }
+
+    public boolean hasKey(String key) {
+        return jsonNode.has(key);
     }
 
     public String getPrettyPrintJsonString() {

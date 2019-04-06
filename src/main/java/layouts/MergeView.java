@@ -2,7 +2,6 @@ package layouts;
 
 import csvmanagement.CsvManageService;
 import csvmanagement.JsonMergeService;
-import csvmanagement.models.CsvLine;
 import csvmanagement.models.SelectedCsv;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,9 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-
 public class MergeView {
     private HBox mainContainer;
     private Stage window;
@@ -33,8 +29,6 @@ public class MergeView {
     private TableView tableView;
     private List<SelectedCsv> currentCsvData;
 
-    private ComboBox<Integer> keyColumnSelector;
-    private ComboBox<Integer> valueColumnSelector;
     private VBox csvViewContainer;
     private int selectedKeyColumn = 0;
     private int selectedValueColumn = 1;
@@ -122,25 +116,23 @@ public class MergeView {
         buttonsArea.setSpacing(10);
 
         Label keyLabel = new Label("Keys:");
-        keyColumnSelector = new ComboBox<>();
+        ComboBox<Integer> keyColumnSelector = new ComboBox<>();
         ObservableList<Integer> keyItems = FXCollections.observableArrayList(1, 2, 3, 4);
         keyColumnSelector.setItems(keyItems);
         keyColumnSelector.getSelectionModel().select(selectedKeyColumn);
         keyColumnSelector.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
             selectedKeyColumn = newItem - 1;
             createCsvContainer(csvManageService.getSelectedCsvColumns(selectedKeyColumn, selectedValueColumn));
-            System.out.println(newItem);
         });
 
         Label valueLabel = new Label("Values:");
-        valueColumnSelector = new ComboBox<>();
+        ComboBox<Integer> valueColumnSelector = new ComboBox<>();
         ObservableList<Integer> valueItems = FXCollections.observableArrayList(1, 2, 3, 4);
         valueColumnSelector.setItems(valueItems);
         valueColumnSelector.getSelectionModel().select(selectedValueColumn);
         valueColumnSelector.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
             selectedValueColumn = newItem - 1;
             createCsvContainer(csvManageService.getSelectedCsvColumns(selectedKeyColumn, selectedValueColumn));
-            System.out.println(newItem);
         });
 
         buttonsArea.getChildren().addAll(keyLabel, keyColumnSelector, valueLabel, valueColumnSelector);
@@ -178,20 +170,31 @@ public class MergeView {
     }
 
     private void mergeSelected() {
-        // TODO allow multiple selections
+        int addedElementCount = 0;
+        int removedElementCount = 0;
         try {
             List<Integer> indexes = (List<Integer>) tableView.getSelectionModel().getSelectedCells()
                     .stream()
                     .map(element -> ((TablePosition) element).getRow())
                     .collect(Collectors.toList());
-            jsonMergeService.add(getSubListOfIndexes(indexes));
+            for (SelectedCsv selectedCsv : getSubListOfSelectedLines(indexes)) {
+                if (jsonMergeService.hasKey(selectedCsv.getKeyField())) {
+                    jsonMergeService.removeElement(selectedCsv);
+                    removedElementCount++;
+                }
+                jsonMergeService.addElement(selectedCsv);
+                currentCsvData.remove(selectedCsv);
+                addedElementCount++;
+            }
+            Main.setMessage("Added " + (addedElementCount - removedElementCount) +
+                    " keys, replaced " + removedElementCount + " elements", MessageType.SUCCESS);
             pasteArea.setText(jsonMergeService.getPrettyPrintJsonString());
         } catch (Exception e) {
             System.out.println(e);
         }
     }
 
-    private List<SelectedCsv> getSubListOfIndexes(List<Integer> indexes) {
+    private List<SelectedCsv> getSubListOfSelectedLines(List<Integer> indexes) {
         List<SelectedCsv> csvElements = new ArrayList<>();
         try {
             indexes.forEach(el -> csvElements.add(currentCsvData.get(el)));
@@ -206,20 +209,9 @@ public class MergeView {
         pasteArea.prefWidthProperty().bind(window.widthProperty().divide(2));
         pasteArea.prefHeightProperty().bind(window.heightProperty());
         pasteArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            parseAndAddJsonData(newValue);
+            jsonMergeService.setJsonNode(newValue);
         });
         mainContainer.getChildren().add(pasteArea);
-    }
-
-    private void parseAndAddJsonData(String textValue) {
-        boolean isJsonValid = jsonMergeService.setJsonNode(textValue);
-        if (isJsonValid) {
-            pasteArea.setStyle("-fx-background-color: #fffaf5");
-            Main.setMessage(null, MessageType.SUCCESS);
-        } else {
-            pasteArea.setStyle("-fx-text-fill: #ff0005");
-            Main.setMessage("Invalid json", MessageType.ERROR);
-        }
     }
 
 
