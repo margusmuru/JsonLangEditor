@@ -67,11 +67,14 @@ public class MergeView {
         Region bottomSpring = new Region();
         VBox.setVgrow(bottomSpring, Priority.ALWAYS);
 
-        Button autoMerge = getAutoMergeButton();
-
         Button mergeSelected = getMergeSelectedButton();
 
-        mergeButtonsContainer.getChildren().addAll(topSpring, autoMerge, mergeSelected, bottomSpring);
+        Region middleSpring = new Region();
+        middleSpring.setPrefHeight(50);
+
+        Button autoMerge = getAutoMergeButton();
+
+        mergeButtonsContainer.getChildren().addAll(topSpring, mergeSelected, middleSpring, autoMerge, bottomSpring);
         mainContainer.getChildren().add(mergeButtonsContainer);
     }
 
@@ -82,6 +85,9 @@ public class MergeView {
         HBox buttonsArea = getCsvButtonsContainer();
 
         tableView = new TableView();
+        Label placeholder = new Label();
+        placeholder.setText("Use Import tab to add some CSV data first.");
+        tableView.setPlaceholder(placeholder);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<String, SelectedCsv> colKey = new TableColumn<>("Key");
@@ -119,7 +125,7 @@ public class MergeView {
         buttonsArea.setPadding(new Insets(4, 4, 4, 4));
         buttonsArea.setSpacing(10);
 
-        Label keyLabel = new Label("Keys:");
+        Label keyLabel = new Label("Keys column:");
         ComboBox<Integer> keyColumnSelector = new ComboBox<>();
         ObservableList<Integer> keyItems = FXCollections.observableArrayList(1, 2, 3, 4);
         keyColumnSelector.setItems(keyItems);
@@ -129,7 +135,7 @@ public class MergeView {
             createCsvContainer(csvManageService.getSelectedCsvColumns(selectedKeyColumn, selectedValueColumn));
         });
 
-        Label valueLabel = new Label("Values:");
+        Label valueLabel = new Label("Values column:");
         ComboBox<Integer> valueColumnSelector = new ComboBox<>();
         ObservableList<Integer> valueItems = FXCollections.observableArrayList(1, 2, 3, 4);
         valueColumnSelector.setItems(valueItems);
@@ -224,6 +230,7 @@ public class MergeView {
 
     private void createJsonViewArea() {
         pasteArea = new TextArea();
+        pasteArea.setPromptText("Paste your existing JSON data here");
         pasteArea.prefWidthProperty().bind(window.widthProperty().divide(2));
         pasteArea.prefHeightProperty().bind(window.heightProperty());
         pasteArea.textProperty().addListener((observable, oldValue, newValue) -> {

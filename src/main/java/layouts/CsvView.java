@@ -8,6 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mainPackage.Main;
@@ -35,10 +37,14 @@ public class CsvView {
         vbox = new VBox();
         buttonBarLayout = new HBox();
         createContainerWithButtons();
+        addData(null);
     }
 
     public void addData(List<CsvLine> data) {
         tableView = new TableView();
+        Label placeholder = new Label();
+        placeholder.setText("Use Import button to add CSV data");
+        tableView.setPlaceholder(placeholder);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<String, CsvLine> colKey = new TableColumn<>("key");
@@ -57,9 +63,11 @@ public class CsvView {
         enCol.setCellValueFactory(new PropertyValueFactory<>("en"));
         enCol.prefWidthProperty().bind(tableView.widthProperty().divide(4));
 
-        data.forEach(csvLine -> {
-            tableView.getItems().add(csvLine);
-        });
+        if(data != null){
+            data.forEach(csvLine -> {
+                tableView.getItems().add(csvLine);
+            });
+        }
         tableView.getColumns().addAll(colKey, etCol, ruCol, enCol);
         tableView.prefHeightProperty().bind(window.heightProperty());
         tableView.getSelectionModel().setSelectionMode(
@@ -73,6 +81,9 @@ public class CsvView {
     private void createContainerWithButtons() {
         buttonBarLayout = new HBox();
         buttonBarLayout.getChildren().add(createImportButton());
+        Region spring = new Region();
+        HBox.setHgrow(spring, Priority.ALWAYS);
+        buttonBarLayout.getChildren().add(spring);
         buttonBarLayout.getChildren().add(createRemoveSelectedLineButton());
         buttonBarLayout.setPadding(new Insets(4, 4, 4, 4));
         buttonBarLayout.setSpacing(10);
@@ -106,7 +117,7 @@ public class CsvView {
                 "-fx-border-color: #828282; " +
                 "-fx-border-width: 2px; " +
                 "-fx-border-radius: 2 2 2 2;");
-        btnRemove.setTooltip(new Tooltip("Removes selected line fron the CSV file"));
+        btnRemove.setTooltip(new Tooltip("Removes selected line from CSV view"));
         btnRemove.setOnAction(event -> removeSelectedLines());
         return btnRemove;
     }
