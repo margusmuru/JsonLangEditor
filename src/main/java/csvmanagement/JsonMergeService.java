@@ -3,6 +3,7 @@ package csvmanagement;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import csvmanagement.models.SelectedCsv;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class JsonMergeService {
     private JsonMergeService() {
         mapper = new ObjectMapper();
         mapper.enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
+        mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
         jsonNode = mapper.createObjectNode();
     }
 

@@ -1,5 +1,6 @@
 package layouts;
 
+import com.google.common.collect.ImmutableList;
 import csvmanagement.CsvManageService;
 import csvmanagement.JsonMergeService;
 import csvmanagement.models.SelectedCsv;
@@ -17,6 +18,7 @@ import mainPackage.Main;
 import mainPackage.models.MessageType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,7 @@ public class MergeView {
     private VBox csvViewContainer;
     private int selectedKeyColumn = 0;
     private int selectedValueColumn = 1;
+    private int lastSelectedTableRowIndex = 0;
 
     public MergeView(Stage window, Tab tabLayout) {
         this.window = window;
@@ -97,6 +100,7 @@ public class MergeView {
         }
 
         tableView.getColumns().addAll(colKey, etCol);
+        tableView.getSelectionModel().select(lastSelectedTableRowIndex);
         tableView.prefHeightProperty().bind(window.heightProperty());
         tableView.getSelectionModel().setSelectionMode(
                 SelectionMode.MULTIPLE
@@ -166,33 +170,46 @@ public class MergeView {
     }
 
     private void autoMerge() {
-        // TODO
+        lastSelectedTableRowIndex = 0;
+        mergeElements(currentCsvData);
     }
 
     private void mergeSelected() {
+        List<Integer> indexes = (List<Integer>) tableView.getSelectionModel().getSelectedCells()
+                .stream()
+                .map(element -> ((TablePosition) element).getRow())
+                .collect(Collectors.toList());
+        Collections.sort(indexes);
+        lastSelectedTableRowIndex = indexes.size() != 0 ? indexes.get(0) : 0;
+        List<SelectedCsv> filteredList = getSubListOfSelectedLines(indexes).stream()
+                .filter(element -> !element.getKeyField().isEmpty())
+                .collect(Collectors.toList());
+        mergeElements(filteredList);
+    }
+
+    private void mergeElements(List<SelectedCsv> csvList) {
         int addedElementCount = 0;
         int removedElementCount = 0;
+        List<SelectedCsv> listCopy = ImmutableList.copyOf(csvList);
         try {
-            List<Integer> indexes = (List<Integer>) tableView.getSelectionModel().getSelectedCells()
-                    .stream()
-                    .map(element -> ((TablePosition) element).getRow())
-                    .collect(Collectors.toList());
-            for (SelectedCsv selectedCsv : getSubListOfSelectedLines(indexes)) {
-                if (jsonMergeService.hasKey(selectedCsv.getKeyField())) {
-                    jsonMergeService.removeElement(selectedCsv);
-                    removedElementCount++;
+            for (SelectedCsv selectedCsv : listCopy) {
+                if(!selectedCsv.getKeyField().isEmpty()){
+                    if (jsonMergeService.hasKey(selectedCsv.getKeyField())) {
+                        jsonMergeService.removeElement(selectedCsv);
+                        removedElementCount++;
+                    }
+                    jsonMergeService.addElement(selectedCsv);
+                    currentCsvData.remove(selectedCsv);
+                    addedElementCount++;
                 }
-                jsonMergeService.addElement(selectedCsv);
-                currentCsvData.remove(selectedCsv);
-                addedElementCount++;
             }
-            createCsvContainer(currentCsvData);
-            Main.setMessage("Added " + (addedElementCount - removedElementCount) +
-                    " keys, replaced " + removedElementCount + " elements", MessageType.SUCCESS);
-            pasteArea.setText(jsonMergeService.getPrettyPrintJsonString());
         } catch (Exception e) {
-            // left blank
+            System.out.println("Error merging");
         }
+        createCsvContainer(currentCsvData);
+        Main.setMessage("Added " + (addedElementCount - removedElementCount) +
+                " keys, replaced " + removedElementCount + " elements", MessageType.SUCCESS);
+        pasteArea.setText(jsonMergeService.getPrettyPrintJsonString());
     }
 
     private List<SelectedCsv> getSubListOfSelectedLines(List<Integer> indexes) {
