@@ -186,11 +186,12 @@ public class MergeView {
                 currentCsvData.remove(selectedCsv);
                 addedElementCount++;
             }
+            createCsvContainer(currentCsvData);
             Main.setMessage("Added " + (addedElementCount - removedElementCount) +
                     " keys, replaced " + removedElementCount + " elements", MessageType.SUCCESS);
             pasteArea.setText(jsonMergeService.getPrettyPrintJsonString());
         } catch (Exception e) {
-            System.out.println(e);
+            // left blank
         }
     }
 
@@ -209,9 +210,18 @@ public class MergeView {
         pasteArea.prefWidthProperty().bind(window.widthProperty().divide(2));
         pasteArea.prefHeightProperty().bind(window.heightProperty());
         pasteArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            jsonMergeService.setJsonNode(newValue);
+            parseAndAddJsonData(newValue);
         });
         mainContainer.getChildren().add(pasteArea);
+    }
+
+    private void parseAndAddJsonData(String textValue) {
+        boolean isJsonValid = jsonMergeService.setJsonNode(textValue);
+        if (isJsonValid) {
+            pasteArea.setStyle("-fx-background-color: #fffaf5");
+        } else {
+            pasteArea.setStyle("-fx-text-fill: #ff0005");
+        }
     }
 
 
