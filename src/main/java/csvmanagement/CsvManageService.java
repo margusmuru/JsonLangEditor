@@ -2,10 +2,14 @@ package csvmanagement;
 
 import com.google.common.collect.ImmutableList;
 import csvmanagement.models.CsvLine;
+import csvmanagement.models.SelectedCsv;
 import mainPackage.Main;
 import mainPackage.models.MessageType;
 
 import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 public class CsvManageService {
     private List<CsvLine> records;
@@ -49,6 +53,30 @@ public class CsvManageService {
             }
         }
         Main.setMessage("Removed " + shiftPositions + " lines of data", MessageType.SUCCESS);
+    }
+
+    public List<SelectedCsv> getSelectedCsvColumns(int keyCol, int valueCol) {
+        if (!hasParsedCsvData()) {
+            return emptyList();
+        }
+        List<CsvLine> csvRecords = getParsedCsvData();
+        return csvRecords.stream().map(
+                el -> new SelectedCsv(getColumn(el, keyCol), getColumn(el, valueCol))
+        ).collect(toList());
+    }
+
+    private String getColumn(CsvLine csvLine, int index) {
+        switch (index) {
+            case 0:
+                return csvLine.getKey();
+            case 1:
+                return csvLine.getEt();
+            case 2:
+                return csvLine.getRu();
+            case 3:
+                return csvLine.getEn();
+        }
+        return null;
     }
 
 }
