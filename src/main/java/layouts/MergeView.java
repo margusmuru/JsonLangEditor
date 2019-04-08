@@ -9,7 +9,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -17,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mainPackage.Main;
 import mainPackage.models.MessageType;
+import settings.SettingsService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,19 +28,23 @@ public class MergeView {
     private Stage window;
     private JsonMergeService jsonMergeService;
     private CsvManageService csvManageService;
+    private SettingsService settingsService;
     private TextArea pasteArea;
     private TableView tableView;
     private List<SelectedCsv> currentCsvData;
+    private CheckBox sortJsonKeys;
 
     private VBox csvViewContainer;
     private int selectedKeyColumn = 0;
     private int selectedValueColumn = 1;
     private int lastSelectedTableRowIndex = 0;
+    private boolean sortKeys = false;
 
     public MergeView(Stage window, Tab tabLayout) {
         this.window = window;
         pasteArea = new TextArea();
         jsonMergeService = JsonMergeService.getInstance();
+        settingsService = SettingsService.getInstance();
         csvManageService = CsvManageService.getInstance();
 
         mainContainer = new HBox();
@@ -56,6 +60,8 @@ public class MergeView {
     }
 
     public void onTabSelected() {
+        sortKeys = settingsService.isSortJsonKeys();
+        sortJsonKeys.setSelected(sortKeys);
         createCsvContainer(csvManageService.getSelectedCsvColumns(selectedKeyColumn, selectedValueColumn));
     }
 
@@ -202,7 +208,7 @@ public class MergeView {
         List<SelectedCsv> listCopy = ImmutableList.copyOf(csvList);
         try {
             for (SelectedCsv selectedCsv : listCopy) {
-                if(!selectedCsv.getKeyField().isEmpty()){
+                if (!selectedCsv.getKeyField().isEmpty()) {
                     if (jsonMergeService.hasKey(selectedCsv.getKeyField())) {
                         jsonMergeService.removeElement(selectedCsv);
                         removedElementCount++;
@@ -218,7 +224,7 @@ public class MergeView {
         createCsvContainer(currentCsvData);
         Main.setMessage("Added " + (addedElementCount - removedElementCount) +
                 " keys, replaced " + removedElementCount + " elements", MessageType.SUCCESS);
-        pasteArea.setText(jsonMergeService.getPrettyPrintJsonString());
+        pasteArea.setText(jsonMergeService.getPrettyPrintJsonString(sortKeys));
     }
 
     private List<SelectedCsv> getSubListOfSelectedLines(List<Integer> indexes) {
@@ -232,6 +238,14 @@ public class MergeView {
     }
 
     private void createJsonViewArea() {
+        VBox vBox = new VBox();
+        sortJsonKeys = new CheckBox("Sort keys");
+        sortJsonKeys.setPadding(new Insets(4, 4, 4, 4));
+        sortJsonKeys.selectedProperty().addListener((ov, old_val, new_val) -> {
+            sortKeys = new_val;
+            settingsService.setSortJsonKeys(sortKeys);
+            pasteArea.setText(jsonMergeService.getPrettyPrintJsonString(sortKeys));
+        });
         pasteArea = new TextArea();
         pasteArea.setPromptText("Paste your existing JSON data here");
         pasteArea.prefWidthProperty().bind(window.widthProperty().divide(2));
@@ -239,7 +253,8 @@ public class MergeView {
         pasteArea.textProperty().addListener((observable, oldValue, newValue) -> {
             parseAndAddJsonData(newValue);
         });
-        mainContainer.getChildren().add(pasteArea);
+        vBox.getChildren().addAll(sortJsonKeys, pasteArea);
+        mainContainer.getChildren().addAll(vBox);
     }
 
     private void parseAndAddJsonData(String textValue) {

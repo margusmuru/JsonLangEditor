@@ -30,7 +30,7 @@ public class Main extends Application {
 
     public void start(Stage primaryStage) {
         window = primaryStage;
-        window.setTitle("JsonLangEditor 0.1");
+        window.setTitle("JsonLangEditor 0.2");
         // window.getIcons().addElement(new Image("Images/Logo.png"));
         window.setOnCloseRequest(e -> {
             e.consume();
@@ -39,7 +39,7 @@ public class Main extends Application {
         setupUiComponents();
 
 
-        settingsService = new SettingsService();
+        settingsService = SettingsService.getInstance();
         settingsService.loadAndApplySettings();
         setMessage(settingsService.getSettings().toString(), MessageType.SUCCESS);
 
