@@ -1,0 +1,11 @@
+.gradle\
+.idea\
+
+\.gradle/
+
+gradle/
+
+\.idea/
+_settings.data
+
+build/
