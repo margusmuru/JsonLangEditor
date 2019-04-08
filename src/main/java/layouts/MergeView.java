@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -91,10 +92,12 @@ public class MergeView {
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<String, SelectedCsv> colKey = new TableColumn<>("Key");
+        colKey.setSortable(false);
         colKey.setCellValueFactory(new PropertyValueFactory<>("keyField"));
         colKey.prefWidthProperty().bind(tableView.widthProperty().divide(4));
 
         TableColumn<String, SelectedCsv> etCol = new TableColumn<>("Value");
+        etCol.setSortable(false);
         etCol.setCellValueFactory(new PropertyValueFactory<>("valueField"));
         etCol.prefWidthProperty().bind(tableView.widthProperty().divide(4));
 

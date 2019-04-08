@@ -48,18 +48,22 @@ public class CsvView {
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<String, CsvLine> colKey = new TableColumn<>("key");
+        colKey.setSortable(false);
         colKey.setCellValueFactory(new PropertyValueFactory<>("key"));
         colKey.prefWidthProperty().bind(tableView.widthProperty().divide(4));
 
         TableColumn<String, CsvLine> etCol = new TableColumn<>("et");
+        etCol.setSortable(false);
         etCol.setCellValueFactory(new PropertyValueFactory<>("et"));
         etCol.prefWidthProperty().bind(tableView.widthProperty().divide(4));
 
         TableColumn<String, CsvLine> ruCol = new TableColumn<>("ru");
+        ruCol.setSortable(false);
         ruCol.setCellValueFactory(new PropertyValueFactory<>("ru"));
         ruCol.prefWidthProperty().bind(tableView.widthProperty().divide(4));
 
         TableColumn<String, CsvLine> enCol = new TableColumn<>("en");
+        enCol.setSortable(false);
         enCol.setCellValueFactory(new PropertyValueFactory<>("en"));
         enCol.prefWidthProperty().bind(tableView.widthProperty().divide(4));
 
