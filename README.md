@@ -25,3 +25,8 @@ App creates "_settings.data" file to remember last window size and position.
 
 <h3>Download executable JAR</h3>
 [OneDrive](https://1drv.ms/f/s!AvYEqSfRGivGh5RWDNNrp9LEKrX3Lg)
+
+<br>
+Requirements:<br>
+Java Runtime Environment: 
+https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
