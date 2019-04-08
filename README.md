@@ -23,4 +23,5 @@ This is a simple JavaFX app to make process of getting Angular web app translati
 
 App creates "_settings.data" file to remember last window size and position.
 
-<h3>[Download executable JAR](https://1drv.ms/f/s!AvYEqSfRGivGh5RWDNNrp9LEKrX3Lg)</h3>
+<h3>Download executable JAR</h3>
+[OneDrive](https://1drv.ms/f/s!AvYEqSfRGivGh5RWDNNrp9LEKrX3Lg)
