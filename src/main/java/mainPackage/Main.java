@@ -39,7 +39,7 @@ public class Main extends Application {
         setupUiComponents();
 
 
-        settingsService = new SettingsService();
+        settingsService = SettingsService.getInstance();
         settingsService.loadAndApplySettings();
         setMessage(settingsService.getSettings().toString(), MessageType.SUCCESS);
 

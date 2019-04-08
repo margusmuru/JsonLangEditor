@@ -49,10 +49,13 @@ public class JsonMergeService {
         return jsonNode.has(key);
     }
 
-    public String getPrettyPrintJsonString() {
+    public String getPrettyPrintJsonString(boolean sorted) {
         try {
-            Object json = mapper.readValue(jsonNode.toString(), Object.class);
-            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+            ObjectMapper prettyMapper = new ObjectMapper();
+            System.out.println(jsonNode.toString());
+            prettyMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, sorted);
+            Object json = prettyMapper.readValue(jsonNode.toString(), Object.class);
+            return prettyMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
         } catch (Exception e) {
             Main.setMessage("prettyPrintJsonString error occurred", MessageType.ERROR);
             return null;
