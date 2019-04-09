@@ -5,7 +5,7 @@ This is a simple JavaFX app to make process of getting Angular web app translati
 <h2>Features:</h2>
 <h3>Import CSV file</h3>
 *  The first 4 columns (maximum) should contain keys and translations. <br>
-*  You can remove lines with DELETE key or by pressingg "remove selected lines" button. Multiselect is supported.<br>
+*  You can remove lines with DELETE key or by pressing "remove selected lines" button. Multiselect is supported.<br>
 
 ![image1](https://imgur.com/PY6mBVS.png)
 
