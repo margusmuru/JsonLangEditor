@@ -21,12 +21,12 @@ public class CsvImportService {
         dataReader = new DataReader();
     }
 
-    public List<CsvLine> getParsedCsvFile() {
+    public List<CsvLine> getParsedCsvFile(char separator) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open CSV File");
         File file = fileChooser.showOpenDialog(window);
         List<CsvLine> records = new ArrayList<>();
-        try (CSVReader csvReader = new CSVReader(dataReader.openFile(file))) {
+        try (CSVReader csvReader = new CSVReader(dataReader.openFile(file), separator)) {
             String[] values;
             while ((values = csvReader.readNext()) != null) {
                 records.add(new CsvLine(values));

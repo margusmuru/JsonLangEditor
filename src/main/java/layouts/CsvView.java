@@ -3,6 +3,8 @@ package layouts;
 import csvmanagement.CsvImportService;
 import csvmanagement.CsvManageService;
 import csvmanagement.models.CsvLine;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -27,6 +29,7 @@ public class CsvView {
     private CsvImportService csvImportService;
     private CsvManageService csvManageService;
     private TableView tableView;
+    private char csvImportSeparator = ';';
 
     public CsvView(Stage window, Tab tabLayout) {
         this.window = window;
@@ -84,7 +87,7 @@ public class CsvView {
 
     private void createContainerWithButtons() {
         buttonBarLayout = new HBox();
-        buttonBarLayout.getChildren().add(createImportButton());
+        buttonBarLayout.getChildren().addAll(createSeparatorSelector(), createImportButton());
         Region spring = new Region();
         HBox.setHgrow(spring, Priority.ALWAYS);
         buttonBarLayout.getChildren().add(spring);
@@ -93,6 +96,18 @@ public class CsvView {
         buttonBarLayout.setSpacing(10);
         vbox = new VBox(buttonBarLayout);
         tabLayout.setContent(vbox);
+    }
+
+    private HBox createSeparatorSelector() {
+        Label keyLabel = new Label("Separator: ");
+        ComboBox<Character> keyColumnSelector = new ComboBox<>();
+        ObservableList<Character> keyItems = FXCollections.observableArrayList(';', ',');
+        keyColumnSelector.setItems(keyItems);
+        keyColumnSelector.getSelectionModel().select(0);
+        keyColumnSelector.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
+            csvImportSeparator = newItem;
+        });
+        return new HBox(keyLabel, keyColumnSelector);
     }
 
     private Button createImportButton() {
@@ -109,7 +124,7 @@ public class CsvView {
 
     private void importCsv() {
         csvImportService = new CsvImportService(window);
-        List<CsvLine> csvData = csvImportService.getParsedCsvFile();
+        List<CsvLine> csvData = csvImportService.getParsedCsvFile(csvImportSeparator);
         csvManageService.setParsedCsvData(csvData);
         addData(csvData);
         tabLayout.setContent(vbox);
