@@ -1,6 +1,5 @@
 package layouts;
 
-import com.sun.java.swing.plaf.windows.WindowsOptionPaneUI;
 import csvmanagement.CsvImportService;
 import csvmanagement.CsvManagerService;
 import javafx.beans.property.SimpleStringProperty;
@@ -63,7 +62,6 @@ public class CsvImportTab extends MyTabImpl {
         if (csvData.isEmpty()) {
             return;
         }
-        // csvManageService.setParsedCsvData(csvData);
         setCsvDataToView(csvData);
     }
 
@@ -118,11 +116,10 @@ public class CsvImportTab extends MyTabImpl {
         try {
             List<Integer> indexList = new ArrayList<>();
             tableView.getSelectionModel().getSelectedCells().forEach(
-                    element -> indexList.add(((TablePosition) element).getRow())
+                    element -> indexList.add(element.getRow())
             );
             Collections.sort(indexList);
             csvManagerService.removeRecords(indexList);
-            //setCsvDataToView(csvManageService.getParsedCsvData());
         } catch (Exception e) {
             Main.setMessage("Unable to remove lines.", MessageType.ERROR);
         }

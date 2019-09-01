@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MergeView {
+public class MergeTab extends MyTabImpl {
     private HBox mainContainer;
     private Stage window;
     private JsonMergeService jsonMergeService;
@@ -40,8 +40,10 @@ public class MergeView {
     private int lastSelectedTableRowIndex = 0;
     private boolean sortKeys = false;
 
-    public MergeView(Stage window, Tab tabLayout) {
-        this.window = window;
+    public MergeTab() {
+        super();
+        createTabWithName("Merge");
+        this.window = Main.getWindow();
         pasteArea = new TextArea();
         jsonMergeService = JsonMergeService.getInstance();
         settingsService = SettingsService.getInstance();
@@ -54,9 +56,7 @@ public class MergeView {
         createMergeButtonContainer();
 
         createCsvContainer(null);
-
-
-        tabLayout.setContent(mainContainer);
+        this.mainLayout.getChildren().add(mainContainer);
     }
 
     public void onTabSelected() {

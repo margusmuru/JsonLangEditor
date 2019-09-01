@@ -7,6 +7,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro8.JMetro;
 import layouts.CsvImportTab;
+import layouts.MergeTab;
 import layouts.MessageBar;
 import layouts.TabLayout;
 import lombok.Getter;
@@ -70,8 +71,10 @@ public class Main extends Application {
     private void setupTabLayout() {
         TabLayout tabLayout = new TabLayout();
         CsvImportTab csvImportTab = new CsvImportTab();
+        MergeTab mergeTab = new MergeTab();
         tabLayout.addTab(csvImportTab.getLayout());
-        tabLayout.addTab(new Tab("Something"));
+        tabLayout.addTab(mergeTab.getLayout());
+
         mainLayout.setCenter(tabLayout.getLayout());
     }
 

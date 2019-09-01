@@ -37,10 +37,10 @@ public class TabView {
 
     private Tab createMergeTab(TabPane tabPane) {
         Tab jsonTab = new Tab("Merge");
-        MergeView mergeView = new MergeView(window, jsonTab);
+        MergeTab mergeTab = new MergeTab();
         tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
             if (newTab.equals(jsonTab)) {
-                mergeView.onTabSelected();
+                mergeTab.onTabSelected();
             }
         });
         return jsonTab;
