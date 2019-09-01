@@ -14,8 +14,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mainPackage.Main;
 import mainPackage.models.MessageType;
-import uielements.ButtonType;
-import uielements.MyButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,7 +96,7 @@ public class CsvView {
     }
 
     private Button createImportButton() {
-        MyButton btnImport = new MyButton(ButtonType.ALERT,"Import CSV");
+        Button btnImport = new Button("Import CSV");
         btnImport.setTooltip(
                 new Tooltip("Import a CSV file containing maximum of 4 columns [keys, lang1, lang2, lang3]"));
         btnImport.setOnAction(event -> importCsv());

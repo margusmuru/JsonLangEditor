@@ -12,7 +12,6 @@ import layouts.TabLayout;
 import lombok.Getter;
 import mainPackage.models.MessageType;
 import settings.SettingsService;
-import uielements.Colors;
 
 public class Main extends Application {
 

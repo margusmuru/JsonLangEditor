@@ -3,7 +3,6 @@ package layouts;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import mainPackage.models.MessageType;
-import uielements.Colors;
 
 public class MessageBar implements MyLayout {
     private HBox messageBoxLayout;
@@ -34,7 +33,6 @@ public class MessageBar implements MyLayout {
 
     private void setupMessageBox() {
         messageBoxLayout = new HBox();
-        //messageBoxLayout.setStyle(Colors.dark);
         messageBox = new Label("");
         messageBoxLayout.getChildren().add(messageBox);
     }
