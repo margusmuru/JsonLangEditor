@@ -3,6 +3,8 @@ package csvmanagement;
 import com.google.common.collect.ImmutableList;
 import csvmanagement.models.CsvLine;
 import csvmanagement.models.SelectedCsv;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import mainPackage.Main;
 import mainPackage.models.MessageType;
 
@@ -11,22 +13,57 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-public class CsvManageService {
+public class CsvManagerService {
     private List<CsvLine> records;
+    private ObservableList<String[]> observableRecords = FXCollections.observableArrayList();
 
-    private static CsvManageService SINGLE_INSTANCE = null;
+    private static CsvManagerService SINGLE_INSTANCE = null;
 
-    private CsvManageService() {
+    private CsvManagerService() {
     }
 
-    public static CsvManageService getInstance() {
+    public static CsvManagerService getInstance() {
         if (SINGLE_INSTANCE == null) {
-            synchronized (CsvManageService.class) {
-                SINGLE_INSTANCE = new CsvManageService();
+            synchronized (CsvManagerService.class) {
+                SINGLE_INSTANCE = new CsvManagerService();
             }
         }
         return SINGLE_INSTANCE;
     }
+
+    public void addRecords(List<String[]> data) {
+        observableRecords.addAll(data);
+    }
+
+    public void clearRecords(){
+        observableRecords.clear();
+    }
+
+    public ObservableList<String[]> getRecords() {
+        return observableRecords;
+    }
+
+    public void removeRecords(List<Integer> indexList) {
+        if (indexList == null || indexList.isEmpty()) {
+            return;
+        }
+        int shiftPositions = 0;
+        for (Integer element : indexList) {
+            int index = element - shiftPositions;
+            if (index >= 0 && observableRecords.size() > index) {
+                observableRecords.remove(index);
+                shiftPositions++;
+            }
+        }
+        Main.setMessage("Removed " + shiftPositions + " lines of data", MessageType.SUCCESS);
+    }
+
+
+
+
+
+
+
 
     public void setParsedCsvData(List<CsvLine> records) {
         this.records = records;
@@ -40,20 +77,7 @@ public class CsvManageService {
         return  records != null && !records.isEmpty();
     }
 
-    public void removeRecords(List<Integer> indexList) {
-        if (indexList == null || indexList.isEmpty()) {
-            return;
-        }
-        int shiftPositions = 0;
-        for (Integer element : indexList) {
-            int index = element - shiftPositions;
-            if (index >= 0 && records.size() > index) {
-                records.remove(index);
-                shiftPositions++;
-            }
-        }
-        Main.setMessage("Removed " + shiftPositions + " lines of data", MessageType.SUCCESS);
-    }
+
 
     public List<SelectedCsv> getSelectedCsvColumns(int keyCol, int valueCol) {
         if (!hasParsedCsvData()) {

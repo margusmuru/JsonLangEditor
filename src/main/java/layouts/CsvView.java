@@ -1,7 +1,7 @@
 package layouts;
 
 import csvmanagement.CsvImportService;
-import csvmanagement.CsvManageService;
+import csvmanagement.CsvManagerService;
 import csvmanagement.models.CsvLine;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -14,6 +14,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mainPackage.Main;
 import mainPackage.models.MessageType;
+import uielements.ButtonType;
+import uielements.MyButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,14 +27,14 @@ public class CsvView {
     HBox buttonBarLayout;
     private Stage window;
     private CsvImportService csvImportService;
-    private CsvManageService csvManageService;
+    private CsvManagerService csvManagerService;
     private TableView tableView;
 
     public CsvView(Stage window, Tab tabLayout) {
         this.window = window;
         this.tabLayout = tabLayout;
-        csvImportService = new CsvImportService(window);
-        csvManageService = CsvManageService.getInstance();
+        csvImportService = CsvImportService.getInstance();
+        csvManagerService = CsvManagerService.getInstance();
 
         vbox = new VBox();
         buttonBarLayout = new HBox();
@@ -96,11 +98,7 @@ public class CsvView {
     }
 
     private Button createImportButton() {
-        Button btnImport = new Button("Import CSV");
-        btnImport.setStyle("-fx-background-color: #91ff80; " +
-                "-fx-border-color: #828282; " +
-                "-fx-border-width: 2px;" +
-                "-fx-border-radius: 2 2 2 2;");
+        MyButton btnImport = new MyButton(ButtonType.ALERT,"Import CSV");
         btnImport.setTooltip(
                 new Tooltip("Import a CSV file containing maximum of 4 columns [keys, lang1, lang2, lang3]"));
         btnImport.setOnAction(event -> importCsv());
@@ -108,9 +106,9 @@ public class CsvView {
     }
 
     private void importCsv() {
-        csvImportService = new CsvImportService(window);
-        List<CsvLine> csvData = csvImportService.getParsedCsvFile();
-        csvManageService.setParsedCsvData(csvData);
+        csvImportService = CsvImportService.getInstance();
+        List<CsvLine> csvData = csvImportService.getParsedCsvLines();
+        csvManagerService.setParsedCsvData(csvData);
         addData(csvData);
         tabLayout.setContent(vbox);
     }
@@ -141,8 +139,8 @@ public class CsvView {
                     element -> indexList.add(((TablePosition) element).getRow())
             );
             Collections.sort(indexList);
-            csvManageService.removeRecords(indexList);
-            addData(csvManageService.getParsedCsvData());
+            csvManagerService.removeRecords(indexList);
+            addData(csvManagerService.getParsedCsvData());
         } catch (Exception e){
             Main.setMessage("Unable to remove lines.", MessageType.ERROR);
         }

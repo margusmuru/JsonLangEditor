@@ -17,13 +17,14 @@ public class Settings implements java.io.Serializable{
         this.sortJsonKeys = true;
     }
 
-    public String toString(){
-        return "settings object [" +
-                "H: " + stageH + ", " +
-                "W: " + stageW + ", " +
-                "X: " + windowX + ", " +
-                "Y: " + windowY +
-                "]";
+    @Override
+    public String toString() {
+        return "Settings{" +
+                "windowX=" + windowX +
+                ", windowY=" + windowY +
+                ", stageW=" + stageW +
+                ", stageH=" + stageH +
+                ", sortJsonKeys=" + sortJsonKeys +
+                '}';
     }
-
 }

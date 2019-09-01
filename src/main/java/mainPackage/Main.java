@@ -2,14 +2,17 @@ package mainPackage;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import layouts.CsvView;
+import jfxtras.styles.jmetro8.JMetro;
+import layouts.CsvImportTab;
 import layouts.MessageBar;
-import layouts.TabView;
+import layouts.TabLayout;
 import lombok.Getter;
 import mainPackage.models.MessageType;
 import settings.SettingsService;
+import uielements.Colors;
 
 public class Main extends Application {
 
@@ -21,8 +24,6 @@ public class Main extends Application {
 
     private SettingsService settingsService;
     private static MessageBar messageBar;
-    private CsvView csvView;
-    private TabView tabView;
 
     public static void main(String[] args) {
         launch(args);
@@ -30,7 +31,7 @@ public class Main extends Application {
 
     public void start(Stage primaryStage) {
         window = primaryStage;
-        window.setTitle("JsonLangEditor 0.3-SNAPSHOT");
+        window.setTitle("JsonLangEditor 0.5-SNAPSHOT");
         // window.getIcons().addElement(new Image("Images/Logo.png"));
         window.setOnCloseRequest(e -> {
             e.consume();
@@ -46,6 +47,8 @@ public class Main extends Application {
         scene = new Scene(mainLayout,
                 settingsService.getSettings().getStageW(),
                 settingsService.getSettings().getStageH());
+        //new JMetro(JMetro.Style.DARK).applyTheme(scene);
+        //scene.getStylesheets().add("/styles.css");
         window.setScene(scene);
         window.show();
     }
@@ -57,7 +60,7 @@ public class Main extends Application {
     private void setupUiComponents() {
         mainLayout = new BorderPane();
         setupMessageBox();
-        setupTabs();
+        setupTabLayout();
     }
 
     private void setupMessageBox() {
@@ -65,8 +68,12 @@ public class Main extends Application {
         mainLayout.setBottom(messageBar.getLayout());
     }
 
-    private void setupTabs() {
-        tabView = new TabView(window, mainLayout);
+    private void setupTabLayout() {
+        TabLayout tabLayout = new TabLayout();
+        CsvImportTab csvImportTab = new CsvImportTab();
+        tabLayout.addTab(csvImportTab.getLayout());
+        tabLayout.addTab(new Tab("Something"));
+        mainLayout.setCenter(tabLayout.getLayout());
     }
 
     private void closeProgram() {

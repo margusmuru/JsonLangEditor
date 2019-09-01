@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'JsonLangEditor'
-version '0.3-SNAPSHOT'
+version '0.5-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
@@ -17,6 +17,6 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
     compile group: 'com.opencsv', name: 'opencsv', version: '4.1'
     compile group: 'com.google.guava', name: 'guava', version: '11.0.2'
-
+    compile 'org.jfxtras:jmetro:5.3'
     compileOnly "org.projectlombok:lombok:1.16.16"
 }

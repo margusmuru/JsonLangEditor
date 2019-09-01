@@ -1,7 +1,7 @@
 package layouts;
 
 import com.google.common.collect.ImmutableList;
-import csvmanagement.CsvManageService;
+import csvmanagement.CsvManagerService;
 import csvmanagement.JsonMergeService;
 import csvmanagement.models.SelectedCsv;
 import javafx.collections.FXCollections;
@@ -27,7 +27,7 @@ public class MergeView {
     private HBox mainContainer;
     private Stage window;
     private JsonMergeService jsonMergeService;
-    private CsvManageService csvManageService;
+    private CsvManagerService csvManagerService;
     private SettingsService settingsService;
     private TextArea pasteArea;
     private TableView tableView;
@@ -45,7 +45,7 @@ public class MergeView {
         pasteArea = new TextArea();
         jsonMergeService = JsonMergeService.getInstance();
         settingsService = SettingsService.getInstance();
-        csvManageService = CsvManageService.getInstance();
+        csvManagerService = CsvManagerService.getInstance();
 
         mainContainer = new HBox();
 
@@ -62,7 +62,7 @@ public class MergeView {
     public void onTabSelected() {
         sortKeys = settingsService.isSortJsonKeys();
         sortJsonKeys.setSelected(sortKeys);
-        createCsvContainer(csvManageService.getSelectedCsvColumns(selectedKeyColumn, selectedValueColumn));
+        createCsvContainer(csvManagerService.getSelectedCsvColumns(selectedKeyColumn, selectedValueColumn));
     }
 
     private void createMergeButtonContainer() {
@@ -141,7 +141,7 @@ public class MergeView {
         keyColumnSelector.getSelectionModel().select(selectedKeyColumn);
         keyColumnSelector.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
             selectedKeyColumn = newItem - 1;
-            createCsvContainer(csvManageService.getSelectedCsvColumns(selectedKeyColumn, selectedValueColumn));
+            createCsvContainer(csvManagerService.getSelectedCsvColumns(selectedKeyColumn, selectedValueColumn));
         });
 
         Label valueLabel = new Label("Values column:");
@@ -151,7 +151,7 @@ public class MergeView {
         valueColumnSelector.getSelectionModel().select(selectedValueColumn);
         valueColumnSelector.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
             selectedValueColumn = newItem - 1;
-            createCsvContainer(csvManageService.getSelectedCsvColumns(selectedKeyColumn, selectedValueColumn));
+            createCsvContainer(csvManagerService.getSelectedCsvColumns(selectedKeyColumn, selectedValueColumn));
         });
 
         buttonsArea.getChildren().addAll(keyLabel, keyColumnSelector, valueLabel, valueColumnSelector);

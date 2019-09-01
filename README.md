@@ -1,4 +1,4 @@
-<h1>JsonLangEditor 0.1</h1>
+<h1>JsonLangEditor 0.5</h1>
 
 This is a simple JavaFX app to make process of getting Angular web app translations from CSV to json faster.
 

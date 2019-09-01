@@ -22,20 +22,20 @@ public class TabView {
         tabpane.setTabClosingPolicy(UNAVAILABLE);
 
         tabpane.getTabs().addAll(
-                createCsvTab(),
-                createJsonTab(tabpane));
+                createCsvImportTab(),
+                createMergeTab(tabpane));
         tabpane.setTabMinWidth(200);
         mainLayout.setCenter(tabpane);
     }
 
-    private Tab createCsvTab() {
+    private Tab createCsvImportTab() {
         Tab csvTab = new Tab("Import CSV");
         // csv view adds itself
-        CsvView csvView = new CsvView(window, csvTab);
+        // CsvView csvView = new CsvView(window, csvTab);
         return csvTab;
     }
 
-    private Tab createJsonTab(TabPane tabPane) {
+    private Tab createMergeTab(TabPane tabPane) {
         Tab jsonTab = new Tab("Merge");
         MergeView mergeView = new MergeView(window, jsonTab);
         tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
