@@ -48,7 +48,7 @@ public class Main extends Application {
                 settingsService.getSettings().getStageW(),
                 settingsService.getSettings().getStageH());
         //new JMetro(JMetro.Style.DARK).applyTheme(scene);
-        //scene.getStylesheets().add("/styles.css");
+        scene.getStylesheets().add("/styles.css");
         window.setScene(scene);
         window.show();
     }

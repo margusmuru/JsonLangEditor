@@ -15,12 +15,20 @@ import java.util.List;
 public class CsvImportService {
     private Stage window;
     private DataReader dataReader;
+    private char columnSeparatorChar = ',';
 
     private static CsvImportService SINGLE_INSTANCE = null;
 
     private CsvImportService() {
         dataReader = new DataReader();
         this.window = Main.getWindow();
+    }
+
+    public void setColumnSeparatorChar(char value) {
+        if (value != ',' && value != ';') {
+            throw new UnsupportedOperationException("Invalid separator character");
+        }
+        columnSeparatorChar = value;
     }
 
     public static CsvImportService getInstance() {
@@ -60,7 +68,7 @@ public class CsvImportService {
         if (file == null) {
             return records;
         }
-        try (CSVReader csvReader = new CSVReader(dataReader.openFile(file))) {
+        try (CSVReader csvReader = new CSVReader(dataReader.openFile(file), columnSeparatorChar)) {
             String[] values;
             while ((values = csvReader.readNext()) != null) {
                 records.add(values);
