@@ -25,8 +25,6 @@ public class CsvManagerService {
     private static CsvManagerService SINGLE_INSTANCE = null;
 
     private CsvManagerService() {
-        // by default history contains empty list;
-        recordsHistory.add(new ArrayList<>());
     }
 
     public static CsvManagerService getInstance() {
@@ -38,34 +36,60 @@ public class CsvManagerService {
         return SINGLE_INSTANCE;
     }
 
-    public void addRecords(List<String[]> data) {
+    public void setRecords(List<String[]> data) {
+        observableRecords.clear();
         observableRecords.addAll(data);
-        recordsHistory.add(data);
+        recordsHistory.add(FXCollections.observableArrayList(observableRecords));
         recordsHistoryLocationIndex++;
         clearRedoHistory();
     }
 
     public void clearRecords() {
         observableRecords.clear();
-        recordsHistory.add(new ArrayList<>());
+        recordsHistory.add(FXCollections.observableArrayList(observableRecords));
         recordsHistoryLocationIndex++;
         clearRedoHistory();
     }
 
+    public List<List<String[]>> getRecordsHistory(){
+        return recordsHistory;
+    }
+
+    public void clearHistory() {
+        recordsHistoryLocationIndex = 0;
+        recordsHistory.clear();
+    }
+
+    public boolean canUndo() {
+        return recordsHistoryLocationIndex > 0;
+    }
+
     public void undoRecords() {
-        recordsHistoryLocationIndex--;
-        List<String[]> copy = new ArrayList<>();
-        Collections.copy(copy, recordsHistory.get(recordsHistoryLocationIndex));
-        observableRecords.clear();
-        observableRecords.addAll(copy);
+        if (!canUndo()) {
+            return;
+        }
+        actionStep(-1);
+    }
+
+    public boolean canRedo() {
+        return recordsHistory.size() > recordsHistoryLocationIndex;
     }
 
     public void redoRecords() {
-        recordsHistoryLocationIndex++;
-        List<String[]> copy = new ArrayList<>();
-        Collections.copy(copy, recordsHistory.get(recordsHistoryLocationIndex));
+        if (!canRedo()) {
+            return;
+        }
+        actionStep(1);
+    }
+
+    private void actionStep(int index) {
+        recordsHistoryLocationIndex = recordsHistoryLocationIndex + index;
         observableRecords.clear();
-        observableRecords.addAll(copy);
+        if (recordsHistoryLocationIndex > 0) {
+            List<String[]> copy = new ArrayList<>();
+            recordsHistory.get(recordsHistoryLocationIndex - 1).forEach(element -> copy.add(element.clone()));
+            observableRecords.addAll(copy);
+        }
     }
 
     private void clearRedoHistory() {
@@ -76,7 +100,7 @@ public class CsvManagerService {
         }
     }
 
-    public ObservableList<String[]> getRecords() {
+    public ObservableList<String[]> getObservableRecords() {
         return observableRecords;
     }
 
@@ -92,25 +116,27 @@ public class CsvManagerService {
                 shiftPositions++;
             }
         }
-        recordsHistory.add(observableRecords);
+        recordsHistory.add(FXCollections.observableArrayList(observableRecords));
         recordsHistoryLocationIndex++;
-        Main.setMessage("Removed " + shiftPositions + " lines of data", MessageType.SUCCESS);
     }
 
 
+    @Deprecated
     public void setParsedCsvData(List<CsvLine> records) {
         this.records = records;
     }
 
+    @Deprecated
     public List<CsvLine> getParsedCsvData() {
         return ImmutableList.copyOf(records);
     }
 
+    @Deprecated
     public boolean hasParsedCsvData() {
         return records != null && !records.isEmpty();
     }
 
-
+    @Deprecated
     public List<SelectedCsv> getSelectedCsvColumns(int keyCol, int valueCol) {
         if (!hasParsedCsvData()) {
             return emptyList();

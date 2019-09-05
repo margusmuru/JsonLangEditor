@@ -143,7 +143,7 @@ public class CsvImportTab extends MyTabImpl {
     }
 
     private void setCsvDataToView(List<String[]> input) {
-        csvManagerService.addRecords(input);
+        csvManagerService.setRecords(input);
         for (int i = 0; i < calculateColumnCount(input); i++) {
             TableColumn tableColumn = new TableColumn(input.get(0)[i]);
             final int colNo = i;
@@ -151,7 +151,7 @@ public class CsvImportTab extends MyTabImpl {
                     p -> new SimpleStringProperty((p.getValue()[colNo])));
             tableView.getColumns().add(tableColumn);
         }
-        tableView.setItems(csvManagerService.getRecords());
+        tableView.setItems(csvManagerService.getObservableRecords());
     }
 
     private int calculateColumnCount(List<String[]> input) {
