@@ -6,10 +6,11 @@ import csvmanagement.models.SelectedCsv;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mainPackage.Main;
+import mainPackage.models.ColumnType;
 import mainPackage.models.MessageType;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
@@ -18,9 +19,11 @@ import static java.util.stream.Collectors.toList;
 public class CsvManagerService {
     // TODO remove
     private List<CsvLine> records;
+
     private List<List<String[]>> recordsHistory = new ArrayList<>();
     private int recordsHistoryLocationIndex = 0;
     private ObservableList<String[]> observableRecords = FXCollections.observableArrayList();
+    private HashMap<ColumnType, Integer> languageColumnMap = new HashMap<>();
 
     private static CsvManagerService SINGLE_INSTANCE = null;
 
@@ -34,6 +37,16 @@ public class CsvManagerService {
             }
         }
         return SINGLE_INSTANCE;
+    }
+
+    public void clearLanguageColumnMap() {
+        languageColumnMap.clear();
+        Main.setMessage("ColumnMap cleared", MessageType.SUCCESS);
+    }
+
+    public void setLanguageColumnMapEntry(ColumnType columnType, Integer value){
+        languageColumnMap.put(columnType, value);
+        Main.setMessage("ColumnMap: Set column " + value + " as " + columnType.name(), MessageType.SUCCESS);
     }
 
     public void setRecords(List<String[]> data) {
@@ -51,7 +64,7 @@ public class CsvManagerService {
         clearRedoHistory();
     }
 
-    public List<List<String[]>> getRecordsHistory(){
+    public List<List<String[]>> getRecordsHistory() {
         return recordsHistory;
     }
 
@@ -80,6 +93,13 @@ public class CsvManagerService {
             return;
         }
         actionStep(1);
+    }
+
+    public int getRecordsColumnCount() {
+        if (observableRecords.isEmpty()) {
+            return 0;
+        }
+        return observableRecords.get(0).length;
     }
 
     private void actionStep(int index) {

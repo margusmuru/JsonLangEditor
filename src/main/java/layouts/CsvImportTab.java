@@ -14,8 +14,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import mainPackage.Main;
+import mainPackage.models.ColumnType;
 import mainPackage.models.MessageType;
 
 import java.util.ArrayList;
@@ -28,6 +30,9 @@ public class CsvImportTab extends MyTabImpl {
     private CsvImportService csvImportService;
     private CsvManagerService csvManagerService;
     private TableView<String[]> tableView;
+    private ObservableList<Integer> columnValueSelectors;
+    private List<ComboBox<Integer>> columnValueSelectorComboBoxList = new ArrayList<>();
+    private VBox columnValueSelectorsArea;
 
     public CsvImportTab() {
         super();
@@ -37,12 +42,92 @@ public class CsvImportTab extends MyTabImpl {
 
         HBox buttonBar = new HBox();
         buttonBar.getChildren().addAll(createRegion(10), createSeparatorSelector(), createRegion(20));
-        buttonBar.getChildren().addAll(createRegion(10), createImportButton(), createRegion(20));
+        buttonBar.getChildren().addAll(createRegion(10), createNewButton(), createRegion(20));
+        buttonBar.getChildren().addAll(createImportButton(), createRegion(20));
         buttonBar.getChildren().addAll(createClearButton(), createSeparator());
         buttonBar.getChildren().addAll(createUndoButton(), createRegion(10));
         buttonBar.getChildren().addAll(createRedoButton());
         tableView = createTableView();
+        columnValueSelectorsArea = createLanguageSelector();
         mainLayout.getChildren().addAll(buttonBar, tableView);
+    }
+
+    private Button createNewButton() {
+        Button btnNew = createButtonBasic("/icons/icon_new.png", "Create an empty CSV file");
+        btnNew.setOnAction(event -> newCsv());
+        return btnNew;
+    }
+
+    private Button createImportButton() {
+        Button btnImport = createButtonBasic("/icons/icon_open.png", "Import a CSV file");
+        btnImport.setOnAction(event -> importCsv());
+        return btnImport;
+    }
+
+    private Button createClearButton() {
+        Button btnClear = createButtonBasic("/icons/icon_delete.png", "Clear CSV");
+        btnClear.setOnAction(event -> clearCsv());
+        return btnClear;
+    }
+
+    private Button createUndoButton() {
+        Button btnUndo = createButtonBasic("/icons/icon_undo.png", "Undo");
+        btnUndo.setOnAction(event -> undo());
+        return btnUndo;
+    }
+
+    private Button createRedoButton() {
+        Button btnRedo = createButtonBasic("/icons/icon_redo.png", "Redo");
+        btnRedo.setOnAction(event -> redo());
+        return btnRedo;
+    }
+
+    private Button createButtonBasic(String iconPath, String toolTip) {
+        Button btn = new Button();
+        Image icon = new Image(getClass().getResourceAsStream(iconPath));
+        ImageView iconView = new ImageView(icon);
+        iconView.setFitHeight(buttonHeight);
+        iconView.setFitWidth(buttonWidth);
+        btn.setGraphic(iconView);
+        btn.setTooltip(new Tooltip(toolTip));
+        return btn;
+    }
+
+    private VBox createLanguageSelector() {
+        VBox main = new VBox();
+        columnValueSelectors = FXCollections.observableArrayList();
+        main.getChildren().addAll(
+                createLanguageSelectorRow(ColumnType.KEY),
+                createLanguageSelectorRow(ColumnType.ET),
+                createLanguageSelectorRow(ColumnType.EN),
+                createLanguageSelectorRow(ColumnType.RU)
+        );
+        return main;
+    }
+
+    private HBox createLanguageSelectorRow(ColumnType columnType) {
+        HBox hBox = new HBox();
+        Label label = new Label(columnType.name() + " is in column ");
+
+        ComboBox<Integer> selector = new ComboBox<>();
+        selector.setMinHeight(buttonHeight);
+        selector.setMaxHeight(buttonHeight);
+        selector.setItems(columnValueSelectors);
+        selector.getSelectionModel().select(0);
+        selector.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
+            csvManagerService.setLanguageColumnMapEntry(columnType, newItem);
+        });
+        columnValueSelectorComboBoxList.add(selector);
+        hBox.getChildren().addAll(createRegion(10), label, createRegion(10), selector);
+        return hBox;
+    }
+
+    private List<Integer> generateRowSelectionNumbers(int count) {
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(i);
+        }
+        return list;
     }
 
     private Separator createSeparator() {
@@ -60,54 +145,6 @@ public class CsvImportTab extends MyTabImpl {
         return region;
     }
 
-    private Button createImportButton() {
-        Button btnImport = new Button();
-        Image iconOpen = new Image(getClass().getResourceAsStream("/icons/icon_open.png"));
-        ImageView iconOpenView = new ImageView(iconOpen);
-        iconOpenView.setFitHeight(buttonHeight);
-        iconOpenView.setFitWidth(buttonWidth);
-        btnImport.setGraphic(iconOpenView);
-        btnImport.setTooltip(new Tooltip("Import a CSV file"));
-        btnImport.setOnAction(event -> importCsv());
-        return btnImport;
-    }
-
-    private Button createClearButton() {
-        Button btnClear = new Button();
-        Image iconClear = new Image(getClass().getResourceAsStream("/icons/icon_delete.png"));
-        ImageView iconOpenView = new ImageView(iconClear);
-        iconOpenView.setFitHeight(buttonHeight);
-        iconOpenView.setFitWidth(buttonWidth);
-        btnClear.setGraphic(iconOpenView);
-        btnClear.setTooltip(new Tooltip("Clear CSV"));
-        btnClear.setOnAction(event -> clearCsv());
-        return btnClear;
-    }
-
-    private Button createUndoButton(){
-        Button btnUndo = new Button();
-        Image iconUndo = new Image(getClass().getResourceAsStream("/icons/icon_undo.png"));
-        ImageView iconUndoView = new ImageView(iconUndo);
-        iconUndoView.setFitHeight(buttonHeight);
-        iconUndoView.setFitWidth(buttonWidth);
-        btnUndo.setGraphic(iconUndoView);
-        btnUndo.setTooltip(new Tooltip("Undo"));
-        btnUndo.setOnAction(event -> undo());
-        return btnUndo;
-    }
-
-    private Button createRedoButton(){
-        Button btnRedo = new Button();
-        Image iconUndo = new Image(getClass().getResourceAsStream("/icons/icon_redo.png"));
-        ImageView iconRedoView = new ImageView(iconUndo);
-        iconRedoView.setFitHeight(buttonHeight);
-        iconRedoView.setFitWidth(buttonWidth);
-        btnRedo.setGraphic(iconRedoView);
-        btnRedo.setTooltip(new Tooltip("Redo"));
-        btnRedo.setOnAction(event -> redo());
-        return btnRedo;
-    }
-
     private ComboBox<Character> createSeparatorSelector() {
         ComboBox<Character> keyColumnSelector = new ComboBox<>();
         keyColumnSelector.setTooltip(new Tooltip("Set column separator used in your CSV file"));
@@ -122,6 +159,11 @@ public class CsvImportTab extends MyTabImpl {
         return keyColumnSelector;
     }
 
+    private void newCsv() {
+        csvManagerService.clearRecords();
+        setCsvDataToView(Collections.singletonList(new String[]{"Key", "ET", "EN", "RU"}));
+    }
+
     private void importCsv() {
         List<String[]> csvData = csvImportService.getParsedCsvArray();
         if (csvData.isEmpty()) {
@@ -130,28 +172,54 @@ public class CsvImportTab extends MyTabImpl {
         setCsvDataToView(csvData);
     }
 
+    private void refreshColumnValueSelectors() {
+        int recordsColumnCount = csvManagerService.getRecordsColumnCount();
+        this.columnValueSelectors.clear();
+        this.columnValueSelectors.add(null);
+        this.columnValueSelectors.addAll(generateRowSelectionNumbers(recordsColumnCount));
+
+        mainLayout.getChildren().remove(columnValueSelectorsArea);
+        if (recordsColumnCount > 0) {
+            mainLayout.getChildren().add(columnValueSelectorsArea);
+            csvManagerService.clearLanguageColumnMap();
+            for (int i = 0; i < recordsColumnCount; i++) {
+                columnValueSelectorComboBoxList.get(i).getSelectionModel().select(i + 1);
+                csvManagerService.setLanguageColumnMapEntry(ColumnType.getByIndex(i), i);
+                if (i == 3) {
+                    break;
+                }
+            }
+        }
+    }
+
     private void clearCsv() {
         csvManagerService.clearRecords();
+        setCsvDataToView(new ArrayList<>());
+        refreshColumnValueSelectors();
     }
 
     private void undo() {
         csvManagerService.undoRecords();
+        refreshColumnValueSelectors();
     }
 
     private void redo() {
         csvManagerService.redoRecords();
+        refreshColumnValueSelectors();
     }
 
     private void setCsvDataToView(List<String[]> input) {
         csvManagerService.setRecords(input);
+        tableView.getColumns().clear();
         for (int i = 0; i < calculateColumnCount(input); i++) {
-            TableColumn tableColumn = new TableColumn(input.get(0)[i]);
+            TableColumn tableColumn = new TableColumn(String.valueOf(i));
             final int colNo = i;
             tableColumn.setCellValueFactory((Callback<TableColumn.CellDataFeatures<String[], String>, ObservableValue<String>>)
                     p -> new SimpleStringProperty((p.getValue()[colNo])));
             tableView.getColumns().add(tableColumn);
         }
         tableView.setItems(csvManagerService.getObservableRecords());
+        refreshColumnValueSelectors();
     }
 
     private int calculateColumnCount(List<String[]> input) {
