@@ -5,6 +5,7 @@ import csvmanagement.models.CsvLine;
 import fileaccess.DataReader;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lombok.Getter;
 import mainPackage.Main;
 import mainPackage.models.MessageType;
 
@@ -16,12 +17,22 @@ public class CsvImportService {
     private Stage window;
     private DataReader dataReader;
     private char columnSeparatorChar = ',';
+    private FileChooser fileChooser;
+    @Getter
+    private String initialPath;
 
     private static CsvImportService SINGLE_INSTANCE = null;
 
     private CsvImportService() {
         dataReader = new DataReader();
         this.window = Main.getWindow();
+        fileChooser = new FileChooser();
+        fileChooser.setTitle("Open CSV File");
+    }
+
+    public void setInitialPath(String path) {
+        initialPath = path;
+        fileChooser.setInitialDirectory(new File(path));
     }
 
     public void setColumnSeparatorChar(char value) {
@@ -41,8 +52,6 @@ public class CsvImportService {
     }
 
     public List<CsvLine> getParsedCsvLines() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open CSV File");
         File file = fileChooser.showOpenDialog(window);
         if (file == null) {
             return null;
@@ -62,12 +71,13 @@ public class CsvImportService {
 
     public List<String[]> getParsedCsvArray() {
         List<String[]> records = new ArrayList<>();
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open CSV File");
         File file = fileChooser.showOpenDialog(window);
         if (file == null) {
             return records;
         }
+        String absolutePath = file.getAbsolutePath();
+        initialPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
+        fileChooser.setInitialDirectory(new File(initialPath));
         try (CSVReader csvReader = new CSVReader(dataReader.openFile(file), columnSeparatorChar)) {
             String[] values;
             while ((values = csvReader.readNext()) != null) {

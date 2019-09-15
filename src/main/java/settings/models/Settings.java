@@ -8,6 +8,7 @@ import lombok.Data;
 public class Settings implements java.io.Serializable{
     private double windowX, windowY, stageW, stageH;
     boolean sortJsonKeys;
+    String csvPath;
 
     public Settings(){
         this.stageH = 500;
@@ -15,6 +16,7 @@ public class Settings implements java.io.Serializable{
         this.windowX = 0;
         this.windowY = 0;
         this.sortJsonKeys = true;
+        csvPath = null;
     }
 
     @Override
@@ -25,6 +27,7 @@ public class Settings implements java.io.Serializable{
                 ", stageW=" + stageW +
                 ", stageH=" + stageH +
                 ", sortJsonKeys=" + sortJsonKeys +
+                ", csvPath=" + csvPath +
                 '}';
     }
 }

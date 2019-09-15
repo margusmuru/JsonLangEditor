@@ -1,5 +1,6 @@
 package settings;
 
+import csvmanagement.CsvImportService;
 import csvmanagement.JsonMergeService;
 import fileaccess.DataReader;
 import fileaccess.DataWriter;
@@ -49,6 +50,7 @@ public class SettingsService {
     private void applySettings() {
         Main.getWindow().setX(settings.getWindowX());
         Main.getWindow().setY(settings.getWindowY());
+        CsvImportService.getInstance().setInitialPath(settings.getCsvPath());
     }
 
     private void gatherApplicationProperties() {
@@ -56,6 +58,7 @@ public class SettingsService {
         settings.setStageW(Main.getScene().getWidth());
         settings.setWindowX(Main.getWindow().getX());
         settings.setWindowY(Main.getWindow().getY());
+        settings.setCsvPath(CsvImportService.getInstance().getInitialPath());
     }
 
     public boolean isSortJsonKeys() {
